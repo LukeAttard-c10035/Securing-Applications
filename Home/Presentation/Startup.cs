@@ -32,25 +32,27 @@ namespace Presentation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<FileTransferContext>();
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-            services.AddDbContext<FileTransferContext>(options =>
-                    options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
 
-            //password
-            services.Configure<IdentityOptions>(options =>
+            services.AddDbContext<FileTransferContext>(options =>
+               options.UseSqlServer(
+                Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
-                //options.SignIn.RequireConfirmedAccount = false;
+                // password strength
+                options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequiredLength = 8;
-            });
+            }).AddEntityFrameworkStores<FileTransferContext>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
 
+            // google authentication
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {
@@ -59,6 +61,8 @@ namespace Presentation
                     options.ClientId = googleAuthNSection["ClientId"];
                     options.ClientSecret = googleAuthNSection["ClientSecret"];
                 });
+
+            // kinda obselete might delete later
             bool isDB = Configuration.GetValue<bool>("DB");
             if (isDB){
                 services.AddScoped<ILogService, LogInDbService>();

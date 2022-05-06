@@ -38,12 +38,14 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public IActionResult Create(AddFileTransferViewModel model, IFormFile file)
         {
             try
