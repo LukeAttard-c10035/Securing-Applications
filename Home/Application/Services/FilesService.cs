@@ -21,7 +21,8 @@ namespace Application.Services
                 Message = model.Message,
                 Password = model.Password,
                 UserEmail = model.UserEmail,
-                Email = model.Email
+                Email = model.Email,
+                ExpiryDate = model.ExpiryDate,
             });
         }
 
@@ -37,6 +38,7 @@ namespace Application.Services
                 Email = ft.Email,
                 UserEmail = ft.UserEmail,
                 Message = ft.Message,
+                ExpiryDate = ft.ExpiryDate,
             };
             return model;
         }
@@ -56,6 +58,7 @@ namespace Application.Services
                            Email = ft.Email,
                            UserEmail = ft.UserEmail,
                            Message = ft.Message,
+                           ExpiryDate = ft.ExpiryDate,
                        };
             return list;
         }

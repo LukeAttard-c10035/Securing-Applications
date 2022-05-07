@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models
 {
@@ -18,5 +19,7 @@ namespace Domain.Models
         public string Email { get; set; }
         [Required]
         public string FilePath { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime ExpiryDate { get; set; }
     }
 }

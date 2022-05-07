@@ -54,6 +54,11 @@
                 <input type="file" class="form-control" name="file">
                 <span asp-validation-for="FilePath" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="ExpiryDate" class="control-label"></label>
+                <input type="date" asp-for="ExpiryDate" class="form-control" />
+                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+            </div>
             <div class="form-group mt-3">
                 <input type="submit" value="Get a Link" class="btn btn-primary" />
             </div>
