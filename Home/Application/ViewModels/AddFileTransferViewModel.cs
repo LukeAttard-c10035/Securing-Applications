@@ -10,6 +10,6 @@ namespace Application.ViewModels
         public string Password { get; set; }
         public string UserEmail { get; set; }
         public string Email { get; set; }
-        public DateTime ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
     }
 }

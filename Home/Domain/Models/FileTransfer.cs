@@ -19,7 +19,8 @@ namespace Domain.Models
         public string Email { get; set; }
         [Required]
         public string FilePath { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime ExpiryDate { get; set; }
+
+        [FutureDateValidator]
+        public DateTime? ExpiryDate { get; set; }
     }
 }

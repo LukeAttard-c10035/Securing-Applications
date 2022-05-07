@@ -11,6 +11,6 @@ namespace Application.ViewModels
         public string UserEmail { get; set; }
         public string Email { get; set; }
         public string FilePath { get; set; }
-        public DateTime ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
     }
 }

@@ -80,34 +80,16 @@ namespace Presentation.Controllers
                     }
                     filesService.AddFileTransfer(model);
                     ViewBag.Message = "FileTransfer saved successfully";
-
-                    RestClient client = new RestClient();
-                    client.BaseUrl = new Uri("https://api.mailgun.net/v3");
-                    client.Authenticator =
-                    new HttpBasicAuthenticator("api",
-                                               "fd0eaf4bfcca4d975526149edb77dfac-1831c31e-170630e6");
-                    RestRequest request = new RestRequest();
-                    request.AddParameter("domain", "sandboxee4e22a940884c75a75afbd6573cd775.mailgun.org", ParameterType.UrlSegment);
-                    request.Resource = "{domain}/messages";
-                    request.AddParameter("from", "mailgun@sandboxee4e22a940884c75a75afbd6573cd775.mailgun.org");
-                    request.AddParameter("to", model.Email);
-                    request.AddParameter("subject", model.Title);
-                    request.AddParameter("text", model.Message);
-                    //request.AddParameter("text", "https://" + HttpContext.Request.Host + "/" + model.FilePath);
-                    request.AddParameter("text", "http://" + HttpContext.Request.Host + "/" + model.FilePath);
-                    if (!String.IsNullOrEmpty(model.Password))
-                    {
-                        request.AddParameter("text", $"Password: {model.Password}");
-                    }
-                    request.Method = Method.POST;
-                    client.Execute(request);
+                    
+                    // removed email
 
                     Log log = new Log
                     {
                         IP = HttpContext.Connection.RemoteIpAddress.ToString(),
                         UserEmail = model.UserEmail,
-                        Created = DateTime.Now
-                        
+                        Created = DateTime.Now,
+                        Info = "User uploading or something"
+
                     };
                     logService.AddLog(log);
                 }
