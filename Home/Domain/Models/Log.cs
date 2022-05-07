@@ -13,5 +13,7 @@ namespace Domain.Models
         public string IP { get; set; }
         [Required]
         public DateTime Created { get; set; }
+        [Required]
+        public string Info { get; set; }
     }
 }

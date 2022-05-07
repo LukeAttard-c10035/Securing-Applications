@@ -78,9 +78,6 @@ namespace Presentation
             services.AddScoped<IFilesTransferRepository, FilesTransferRepository>();
             services.AddScoped<IFilesService, FilesService>();
 
-            
-           
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

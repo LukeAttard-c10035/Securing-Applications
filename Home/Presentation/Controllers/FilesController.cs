@@ -32,20 +32,21 @@ namespace Presentation.Controllers
 
         public IActionResult Details()
         {
+            //User.Identity.Name
             var username = HttpContext.User.Identity.Name;
             var userTransfers = filesService.GetFileTransfers(username, HttpContext.Request.Host.ToString());
             return View(userTransfers);
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles ="User")]
         public IActionResult Create(AddFileTransferViewModel model, IFormFile file)
         {
             try
