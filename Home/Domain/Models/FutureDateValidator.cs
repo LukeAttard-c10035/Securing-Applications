@@ -7,19 +7,25 @@ namespace Domain.Models
 {
     public class FutureDateValidator : ValidationAttribute
     {   
-        public override bool IsValid(object value)  
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)  
         {
-            if (value == null) return true;
+            if (value == null) return ValidationResult.Success;
             try
             {
                  DateTime currentTime = DateTime.Now;
                  DateTime dateInput = Convert.ToDateTime(value);
 
-                return dateInput > currentTime;
+                if(dateInput <= currentTime)
+                {
+                    var errorMessage = FormatErrorMessage(validationContext.DisplayName);
+                    return new ValidationResult(errorMessage);
+                }
+                return ValidationResult.Success;
             }
             catch (Exception)
             {
-                return false;
+                var errorMessage = FormatErrorMessage(validationContext.DisplayName);
+                return new ValidationResult(errorMessage);
             }
 
         }

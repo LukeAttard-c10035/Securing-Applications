@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 
 namespace Application.ViewModels
 {
@@ -10,6 +11,7 @@ namespace Application.ViewModels
         public string Password { get; set; }
         public string UserEmail { get; set; }
         public string Email { get; set; }
+        [FutureDateValidator(ErrorMessage = "Date is in the past.")]
         public DateTime? ExpiryDate { get; set; }
     }
 }

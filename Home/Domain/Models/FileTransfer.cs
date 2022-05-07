@@ -20,7 +20,7 @@ namespace Domain.Models
         [Required]
         public string FilePath { get; set; }
 
-        [FutureDateValidator]
+        [FutureDateValidator(ErrorMessage = "Date is in the past.")]
         public DateTime? ExpiryDate { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 
 namespace Application.ViewModels
 {
