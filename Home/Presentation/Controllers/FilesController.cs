@@ -53,7 +53,9 @@ namespace Presentation.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    ViewBag.Error = "Please Fille out the rest of the fields";
+                    ViewBag.Error = "Please Fill out the rest of the fields";
+                    logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(),  
+                        model.UserEmail, $"{model.UserEmail} failed uploading {model.FilePath} set to expire {model.ExpiryDate}", "Error");
                     return View();
                 }
                 else
@@ -82,7 +84,7 @@ namespace Presentation.Controllers
                     ViewBag.Message = "FileTransfer saved successfully";
                     
                     // removed email
-
+                    /*
                     Log log = new Log
                     {
                         IP = HttpContext.Connection.RemoteIpAddress.ToString(),
@@ -91,7 +93,8 @@ namespace Presentation.Controllers
                         Info = "User uploading or something"
 
                     };
-                    logService.AddLog(log);
+                    logService.AddLog(log);*/
+                    logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(), model.UserEmail, $"{model.UserEmail} uploaded {model.FilePath} set to expire {model.ExpiryDate}", "Info");
                 }
             } catch (Exception ex)
             {

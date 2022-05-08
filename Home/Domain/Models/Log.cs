@@ -15,5 +15,7 @@ namespace Domain.Models
         public DateTime Created { get; set; }
         [Required]
         public string Info { get; set; }
+        [Required]
+        public string Type { get; set; }
     }
 }

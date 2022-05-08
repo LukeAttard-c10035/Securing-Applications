@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Application.ViewModels;
 using Domain.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Application.Services
@@ -53,7 +54,7 @@ namespace Application.Services
                            Id = ft.Id,
                            Title = ft.Title,
                            //FilePath = $"https://{web}/{ft.FilePath}",
-                           FilePath = $"http://{web}/{ft.FilePath}",
+                           FilePath = $"https://{web}/{ft.FilePath}",
                            Password = ft.Password,
                            Email = ft.Email,
                            UserEmail = ft.UserEmail,

@@ -20,6 +20,19 @@ namespace Application.Services
                 Created = DateTime.Now,
                 IP = model.IP,
                 UserEmail = model.UserEmail,
+                Info = model.Info,
+            });
+        }
+
+        public void SetupLog(string userIP, string userEmail, string message, string type)
+        {
+            logRepo.AddLog(new Log()
+            {
+                Created = DateTime.Now,
+                IP = userIP,
+                UserEmail = userEmail,
+                Info = message,
+                Type = type
             });
         }
     }

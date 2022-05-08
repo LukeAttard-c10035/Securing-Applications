@@ -16,5 +16,10 @@ namespace Application.Services
         {
             logRepo.AddLog(log);
         }
+
+        public void SetupLog(string userIP, string userEmail, string message, string type)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
