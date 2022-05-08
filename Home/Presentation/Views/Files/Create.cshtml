@@ -25,24 +25,9 @@
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="UserEmail" class="control-label"></label>
-                <input asp-for="UserEmail" class="form-control" />
-                <span asp-validation-for="UserEmail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Message" class="control-label"></label>
-                <textarea asp-for="Message" class="form-control" rows="3" ></textarea>
-                <span asp-validation-for="Message" class="text-danger"></span>
+                <label asp-for="AuthorizedUsers" class="control-label"></label>
+                <input asp-for="AuthorizedUsers" class="form-control" />
+                <span asp-validation-for="AuthorizedUsers" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
@@ -61,9 +46,7 @@
             </div>
             <div class="form-group mt-3">
                 <input type="submit" value="Get a Link" class="btn btn-primary" />
-            </div>
-
-           
+            </div>      
         </form>
     </div>
 </div>

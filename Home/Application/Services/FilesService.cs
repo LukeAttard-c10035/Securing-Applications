@@ -17,14 +17,13 @@ namespace Application.Services
         {
             ftRepo.AddFileTransfer(new Domain.Models.FileTransfer()
             {
-                Title = model.Title,
                 FilePath = model.FilePath,
-                Message = model.Message,
                 Password = model.Password,
                 UserEmail = model.UserEmail,
-                Email = model.Email,
+                AuthorizedUsers = model.AuthorizedUsers,
                 ExpiryDate = model.ExpiryDate,
-            });
+                isExpired = false,
+            }); ;
         }
 
         public FileTransferViewModel GetFileTransfer(int id)
@@ -33,13 +32,12 @@ namespace Application.Services
             FileTransferViewModel model = new FileTransferViewModel()
             {
                 Id = ft.Id,
-                Title = ft.Title,
                 FilePath = ft.FilePath,
                 Password = ft.Password,
-                Email = ft.Email,
+                AuthorizedUsers = ft.AuthorizedUsers,
                 UserEmail = ft.UserEmail,
-                Message = ft.Message,
                 ExpiryDate = ft.ExpiryDate,
+                isExpired =  ft.isExpired,
             };
             return model;
         }
@@ -47,19 +45,18 @@ namespace Application.Services
         public IQueryable<FileTransferViewModel> GetFileTransfers(string username, string web)
         {
             var list = from ft in ftRepo.GetFileTransfers()
-                       where (ft.UserEmail == username) || (ft.Email == username)
+                       //where (ft.UserEmail == username) || (ft.Email == username)
                        orderby ft.Id descending
                        select new FileTransferViewModel()
                        {
                            Id = ft.Id,
-                           Title = ft.Title,
                            //FilePath = $"https://{web}/{ft.FilePath}",
                            FilePath = $"https://{web}/{ft.FilePath}",
                            Password = ft.Password,
-                           Email = ft.Email,
+                           AuthorizedUsers = ft.AuthorizedUsers,
                            UserEmail = ft.UserEmail,
-                           Message = ft.Message,
                            ExpiryDate = ft.ExpiryDate,
+                           isExpired = ft.isExpired,
                        };
             return list;
         }

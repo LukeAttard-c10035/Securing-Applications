@@ -51,6 +51,7 @@ namespace Presentation.Controllers
         {
             try
             {
+                model.UserEmail = User.Identity.Name;
                 if (!ModelState.IsValid)
                 {
                     ViewBag.Error = "Please Fill out the rest of the fields";

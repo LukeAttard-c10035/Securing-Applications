@@ -7,20 +7,19 @@ namespace Domain.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public string Title { get; set; }
 
-        public string Message { get; set; } //not required
         public string Password { get; set; } // not requited
 
         [Required]
         public string UserEmail { get; set; }
-        [Required]
-        public string Email { get; set; }
+        
+        public string AuthorizedUsers { get; set; }
         [Required]
         public string FilePath { get; set; }
 
         [FutureDateValidator(ErrorMessage = "Date is in the past.")]
         public DateTime? ExpiryDate { get; set; }
+        [Required]
+        public bool isExpired { get; set; }
     }
 }
