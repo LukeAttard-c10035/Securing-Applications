@@ -19,11 +19,15 @@ namespace Presentation.Controllers
         private IFilesService filesService;
         private IWebHostEnvironment webHostEnvironment;
         private ILogService logService;
-        public FilesController(IFilesService _filesService, IWebHostEnvironment _webHostEnvironment, ILogService _logService)
+        private IUsersService usersService;
+
+        public FilesController(IFilesService _filesService, IWebHostEnvironment _webHostEnvironment, 
+            ILogService _logService, IUsersService _usersService)
         {
             logService = _logService;
             filesService = _filesService;
             webHostEnvironment = _webHostEnvironment;
+            usersService = _usersService;
         }
         public IActionResult Index()
         {
@@ -42,6 +46,9 @@ namespace Presentation.Controllers
         [Authorize(Roles = "User")]
         public IActionResult Create()
         {
+            var usernames = usersService.GetUsers();
+            usernames.Remove(User.Identity.Name);
+            ViewBag.Users = usernames;
             return View();
         }
 
@@ -61,6 +68,32 @@ namespace Presentation.Controllers
                 }
                 else
                 {
+                    /*
+                    byte[] dictionary = new byte[] { 255, 216 }; //represents a jpg
+                                                                 //checking file type
+                    using (Stream myFileForCheckingType = file.OpenReadStream())
+                    {
+
+                        byte[] toBeVerified = new byte[dictionary.Length];
+                        myFileForCheckingType.Read(toBeVerified, 0, dictionary.Length);
+
+                        for (int i = 0; i < dictionary.Length; i++)
+                        {
+                            if (dictionary[i] != toBeVerified[i])
+                            {
+                                throw new Exception($"File format is not acceptable");
+                            }
+                            //you need to compare dictionary[i] with toBeVerified[i]
+                            //if you find that there is a mismatch  throw new ArgumentException($"File format is not acceptable");
+                        }
+
+
+                        if (Path.GetExtension(file.FileName) != ".png")
+                        {
+                            throw new ArgumentException($"File type is not accepted, User file type was: {Path.GetExtension(file.FileName)}");
+                        }
+                    }
+                    */
                     if (file != null)
                     {
                         string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);

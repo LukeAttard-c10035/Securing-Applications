@@ -75,7 +75,8 @@ namespace Presentation
                 services.AddScoped<ILogRepository, LogInFileRepository>();
             }
          
-
+            services.AddScoped<IUsersRepository, UsersRepository>();
+            services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IFilesTransferRepository, FilesTransferRepository>();
             services.AddScoped<IFilesService, FilesService>();
 
