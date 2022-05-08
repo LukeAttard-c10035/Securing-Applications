@@ -24,7 +24,9 @@
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            @if(ViewBag.Users != null)
+            {
+                <div class="form-group">
                 <label asp-for="AuthorizedUsers" class="control-label"></label>
                 <select asp-for="AuthorizedUsers" class="selectpicker col-10" multiple title="Choose one of the following...">
                     @foreach(var user in ViewBag.Users)
@@ -34,7 +36,9 @@
                 </select>
 
                 <span asp-validation-for="AuthorizedUsers" class="text-danger"></span>
-            </div>
+                </div>
+            }
+            
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
                 <input asp-for="Password" class="form-control" />

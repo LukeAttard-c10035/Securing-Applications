@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Utilities;
 using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Presentation.Controllers
 {
@@ -62,38 +64,20 @@ namespace Presentation.Controllers
                 if (!ModelState.IsValid)
                 {
                     ViewBag.Error = "Please Fill out the rest of the fields";
-                    logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(),  
+                    logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(),
                         model.UserEmail, $"{model.UserEmail} failed uploading {model.FilePath} set to expire {model.ExpiryDate}", "Error");
                     return View();
                 }
                 else
                 {
-                    /*
-                    byte[] dictionary = new byte[] { 255, 216 }; //represents a jpg
-                                                                 //checking file type
-                    using (Stream myFileForCheckingType = file.OpenReadStream())
+                    Magic magic = new Magic();
+                    if (!magic.MagicChecker(file))
                     {
-
-                        byte[] toBeVerified = new byte[dictionary.Length];
-                        myFileForCheckingType.Read(toBeVerified, 0, dictionary.Length);
-
-                        for (int i = 0; i < dictionary.Length; i++)
-                        {
-                            if (dictionary[i] != toBeVerified[i])
-                            {
-                                throw new Exception($"File format is not acceptable");
-                            }
-                            //you need to compare dictionary[i] with toBeVerified[i]
-                            //if you find that there is a mismatch  throw new ArgumentException($"File format is not acceptable");
-                        }
-
-
-                        if (Path.GetExtension(file.FileName) != ".png")
-                        {
-                            throw new ArgumentException($"File type is not accepted, User file type was: {Path.GetExtension(file.FileName)}");
-                        }
+                        ViewBag.Error = "The file is not in the correct format";
+                        logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(),
+                            model.UserEmail, $"{model.UserEmail} failed uploading {model.FilePath} set to expire {model.ExpiryDate}", "Error");
+                        return View();
                     }
-                    */
                     if (file != null)
                     {
                         string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
