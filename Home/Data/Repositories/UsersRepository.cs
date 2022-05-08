@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Data.Context;
+using Domain.Interfaces;
 using Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,19 @@ namespace Data.Repositories
 {
     public class UsersRepository : IUsersRepository
     {
-        public IQueryable<FileTransfer> GetFileTransfers()
+        private FileTransferContext context;
+        public UsersRepository(FileTransferContext _fileTransferContext)
         {
-            throw new NotImplementedException();
+            context = _fileTransferContext;
+        }
+        public List<string> GetUsers()
+        {
+            List<string> usersList = new List<string>();
+            foreach (var user in context.Users)
+            {
+                usersList.Add(user.UserName);
+            }
+            return usersList;
         }
     }
 }

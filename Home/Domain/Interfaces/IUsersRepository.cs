@@ -8,6 +8,6 @@ namespace Domain.Interfaces
 {
     public interface IUsersRepository
     {
-        public IQueryable<FileTransfer> GetFileTransfers();
+        public List<string> GetUsers();
     }
 }

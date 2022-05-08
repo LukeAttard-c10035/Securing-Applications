@@ -6,5 +6,6 @@ namespace Application.Interfaces
 {
     public interface IUsersService
     {
+        public List<string> GetUsers();
     }
 }
