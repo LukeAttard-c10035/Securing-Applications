@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Domain.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,14 +21,14 @@ namespace Presentation.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<CustomUser> _signInManager;
+        private readonly UserManager<CustomUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<CustomUser> userManager,
+            SignInManager<CustomUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
@@ -75,11 +76,10 @@ namespace Presentation.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                //RSA rsa = new RSACryptoServiceProvider(512);
-                //string privateKeyXML = rsa.ToXmlString(true);
-                //string publicKeyXML = rsa.ToXmlString(false);
-                //_userManager.async
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                RSA rsa = new RSACryptoServiceProvider(512);
+                string privateKeyXML = rsa.ToXmlString(true);
+                string publicKeyXML = rsa.ToXmlString(false);
+                var user = new CustomUser { UserName = Input.Email, Email = Input.Email, publicKey = publicKeyXML, privateKey = privateKeyXML };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

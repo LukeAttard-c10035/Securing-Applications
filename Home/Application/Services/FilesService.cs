@@ -45,7 +45,7 @@ namespace Application.Services
         public IQueryable<FileTransferViewModel> GetFileTransfers(string username, string web)
         {
             var list = from ft in ftRepo.GetFileTransfers()
-                       //where (ft.UserEmail == username) || (ft.Email == username)
+                       where (ft.UserEmail == username)
                        orderby ft.Id descending
                        select new FileTransferViewModel()
                        {

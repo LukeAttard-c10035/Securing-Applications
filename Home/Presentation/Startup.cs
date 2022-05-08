@@ -3,6 +3,7 @@ using Application.Services;
 using Data.Context;
 using Data.Repositories;
 using Domain.Interfaces;
+using Domain.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,7 +38,7 @@ namespace Presentation
                options.UseSqlServer(
                 Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<CustomUser, IdentityRole>(options =>
             {
                 // password strength
                 options.SignIn.RequireConfirmedAccount = false;

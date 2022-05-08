@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Context
 {
-    public class FileTransferContext : IdentityDbContext
+    public class FileTransferContext : IdentityDbContext<CustomUser>
     {
         public FileTransferContext(DbContextOptions<FileTransferContext> options) : base(options) { }
 
