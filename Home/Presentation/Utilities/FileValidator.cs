@@ -6,21 +6,21 @@ namespace Presentation.Utilities
 {
     public class FileValidator
     {
-        byte[] dictionary_png = new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 };
+        byte[] dictionary_png = new byte[] { 255, 216 };
         byte[] dictionary_pdf = new byte[] { 37, 80, 68, 70, 45 }; 
         public bool MagicChecker(IFormFile file)
         {
-            bool isPng = false, isPdf = false, isPngE = false, isPdfE = false;
+            bool isJpg = false, isPdf = false, isJpgE = false, isPdfE = false;
             using (Stream myFileForCheckingType = file.OpenReadStream())
             {
                 byte[] toBeVerified = new byte[dictionary_png.Length];
                 myFileForCheckingType.Read(toBeVerified, 0, dictionary_png.Length);
-                isPng = dictionary_png.SequenceEqual(toBeVerified);
+                isJpg = dictionary_png.SequenceEqual(toBeVerified);
             }
 
-            if (Path.GetExtension(file.FileName) == ".png")
+            if (Path.GetExtension(file.FileName) == ".jpg")
             {
-                isPngE = true;
+                isJpgE = true;
             }
 
             using (Stream myFileForCheckingType = file.OpenReadStream())
@@ -35,7 +35,7 @@ namespace Presentation.Utilities
                 isPdfE = true;
             }
 
-            return ((isPng && isPngE) || (isPdf && isPdfE));
+            return ((isJpg && isJpgE) || (isPdf && isPdfE));
         }
     }
 }

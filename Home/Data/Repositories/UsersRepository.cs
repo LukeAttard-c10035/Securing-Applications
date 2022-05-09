@@ -27,7 +27,7 @@ namespace Data.Repositories
 
         public CustomUser GetUser(string username)
         {
-            return context.Users.SingleOrDefault(user => user.Id == username);
+            return context.Users.SingleOrDefault(user => user.UserName == username);
         }
     }
 }

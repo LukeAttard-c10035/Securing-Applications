@@ -47,12 +47,12 @@ namespace Presentation.Utilities
         {
             cipher.Position = 0;
             //reading the encrypted key and iv
-            byte[] encryptedKey = new byte[256];
-            cipher.Read(encryptedKey, 0, 256); //file pointer will move 128 positions
+            byte[] encryptedKey = new byte[64];
+            cipher.Read(encryptedKey, 0, 64); //file pointer will move 128 positions
 
 
-            byte[] encryptedIv = new byte[256];
-            cipher.Read(encryptedIv, 0, 256); //file pointer will move ANOTHER 128 positions i.e. 255
+            byte[] encryptedIv = new byte[64];
+            cipher.Read(encryptedIv, 0, 64); //file pointer will move ANOTHER 128 positions i.e. 255
 
             MemoryStream encryptedFileContent = new MemoryStream();
             cipher.CopyTo(encryptedFileContent); //file pointer will move to the eof reading what's left
@@ -60,16 +60,15 @@ namespace Presentation.Utilities
 
             RSA myAlg_Asym  = RSACryptoServiceProvider.Create();
             myAlg_Asym.FromXmlString(privateKey);
-
-            byte[] originalIv = myAlg_Asym.Decrypt(encryptedIv, RSAEncryptionPadding.Pkcs1);
             byte[] originalKey = myAlg_Asym.Decrypt(encryptedKey, RSAEncryptionPadding.Pkcs1);
+            byte[] originalIv = myAlg_Asym.Decrypt(encryptedIv, RSAEncryptionPadding.Pkcs1);
 
             Rijndael myAlg_Sym = Rijndael.Create();
             myAlg_Sym.Key = originalKey;
             myAlg_Sym.IV = originalIv;
-            CryptoStream cs = new CryptoStream(cipher, myAlg_Sym.CreateDecryptor(), CryptoStreamMode.Read);
+            CryptoStream cs = new CryptoStream(encryptedFileContent, myAlg_Sym.CreateDecryptor(), CryptoStreamMode.Read);
             MemoryStream originalFileData = new MemoryStream();
-            cs.Position = 0;
+            originalFileData.Position = 0;
             cs.CopyTo(originalFileData);
             cs.Close();
 
@@ -122,7 +121,7 @@ namespace Presentation.Utilities
             //e.g. Md5 (weak & broken), Sha1 (weak & broken), Sha256, Sha512
 
             SHA512 myAlg = SHA512.Create();
-            byte[] myData = Encoding.UTF32.GetBytes(originalText);
+            byte[] myData = Convert.FromBase64String(originalText); //Encoding.UTF32.GetBytes(originalText);
             byte[] digest = myAlg.ComputeHash(myData);
 
             return Convert.ToBase64String(digest);
