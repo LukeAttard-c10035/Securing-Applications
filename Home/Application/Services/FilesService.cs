@@ -18,11 +18,12 @@ namespace Application.Services
             ftRepo.AddFileTransfer(new Domain.Models.FileTransfer()
             {
                 FilePath = model.FilePath,
-                Password = model.Password,
                 UserEmail = model.UserEmail,
                 AuthorizedUsers = model.AuthorizedUsers,
                 ExpiryDate = model.ExpiryDate,
                 isExpired = false,
+                DigitalSignature = model.DigitalSignature,
+                FileName = model.FileName,
             }); ;
         }
 
@@ -33,11 +34,12 @@ namespace Application.Services
             {
                 Id = ft.Id,
                 FilePath = ft.FilePath,
-                Password = ft.Password,
                 AuthorizedUsers = ft.AuthorizedUsers,
                 UserEmail = ft.UserEmail,
                 ExpiryDate = ft.ExpiryDate,
                 isExpired =  ft.isExpired,
+                DigitalSignature = ft.DigitalSignature,
+                FileName = ft.FileName,
             };
             return model;
         }
@@ -52,11 +54,12 @@ namespace Application.Services
                            Id = ft.Id,
                            //FilePath = $"https://{web}/{ft.FilePath}",
                            FilePath = $"https://{web}/{ft.FilePath}",
-                           Password = ft.Password,
                            AuthorizedUsers = ft.AuthorizedUsers,
                            UserEmail = ft.UserEmail,
                            ExpiryDate = ft.ExpiryDate,
                            isExpired = ft.isExpired,
+                           DigitalSignature = ft.DigitalSignature,
+                           FileName = ft.FileName,
                        };
             return list;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Presentation.Utilities
 {
-    public class Magic
+    public class FileValidator
     {
         byte[] dictionary_png = new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 };
         byte[] dictionary_pdf = new byte[] { 37, 80, 68, 70, 45 }; 
@@ -35,7 +35,7 @@ namespace Presentation.Utilities
                 isPdfE = true;
             }
 
-            return (isPng || isPdf || isPngE || isPdfE);
+            return ((isPng && isPngE) || (isPdf && isPdfE));
         }
     }
 }

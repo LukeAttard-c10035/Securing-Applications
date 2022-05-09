@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="UserFiles\" />
     <Folder Include="wwwroot\files\" />
     <Folder Include="wwwroot\logs\" />
   </ItemGroup>

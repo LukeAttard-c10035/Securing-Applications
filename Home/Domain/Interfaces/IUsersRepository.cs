@@ -9,5 +9,6 @@ namespace Domain.Interfaces
     public interface IUsersRepository
     {
         public List<string> GetUsers();
+        public CustomUser GetUser(string username);
     }
 }

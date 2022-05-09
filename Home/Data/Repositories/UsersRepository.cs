@@ -19,10 +19,15 @@ namespace Data.Repositories
         {
             List<string> usersList = new List<string>();
             foreach (var user in context.Users)
-            {
+            {   
                 usersList.Add(user.UserName);
             }
             return usersList;
+        }
+
+        public CustomUser GetUser(string username)
+        {
+            return context.Users.SingleOrDefault(user => user.Id == username);
         }
     }
 }

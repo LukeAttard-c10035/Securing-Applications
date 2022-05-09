@@ -8,8 +8,6 @@ namespace Domain.Models
         [Key]
         public int Id { get; set; }
 
-        public string Password { get; set; } // not requited
-
         [Required]
         public string UserEmail { get; set; }
         
@@ -21,5 +19,9 @@ namespace Domain.Models
         public DateTime? ExpiryDate { get; set; }
         [Required]
         public bool isExpired { get; set; }
+        [Required]
+        public string DigitalSignature { get; set; }
+        [Required]
+        public string FileName { get; set; }
     }
 }

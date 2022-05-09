@@ -17,5 +17,17 @@ namespace Application.Services
         {
            return usersRepo.GetUsers();
         }
+
+        public string GetPublicKey(string email)
+        {
+            var user = usersRepo.GetUser(email);
+            return user.publicKey;
+        }
+
+        public string GetPivateKey(string email)
+        {
+            var user = usersRepo.GetUser(email);
+            return user.privateKey;
+        }
     }
 }

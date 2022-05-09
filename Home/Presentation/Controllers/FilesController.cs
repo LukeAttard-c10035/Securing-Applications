@@ -70,7 +70,7 @@ namespace Presentation.Controllers
                 }
                 else
                 {
-                    Magic magic = new Magic();
+                    FileValidator magic = new FileValidator();
                     if (!magic.MagicChecker(file))
                     {
                         ViewBag.Error = "The file is not in the correct format";
@@ -87,7 +87,64 @@ namespace Presentation.Controllers
                             file.CopyTo(fs);
                             fs.Close();
                         }
-                        using (ZipFile zip = new ZipFile())
+                        // removed zip
+                        model.FilePath = "still need to add it"; /// do not forget to do this
+                        model.DigitalSignature = "still need to implement this"; // this too
+                        model.FileName = file.FileName;
+                    }
+                    filesService.AddFileTransfer(model);
+                    ViewBag.Message = "FileTransfer saved successfully";
+                    logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(), model.UserEmail, $"{model.UserEmail} uploaded {model.FilePath} set to expire {model.ExpiryDate}", "Info");
+                }
+            } catch (Exception ex)
+            {
+                ViewBag.Error = "FileTransfer was not saved - " + ex.Message;
+            }
+            return RedirectToAction("Create");
+        }
+
+        public async void upload(IFormFile file)
+        {
+            Cryptographic c = new Cryptographic();
+            MemoryStream ms = new MemoryStream();
+            string privateKey = usersService.GetPivateKey(User.Identity.Name);
+            file.OpenReadStream().Position = 0; // very fucking important to do this evreytime you use a stream
+            file.CopyTo(ms);
+            ms.Position = 0;
+            byte[] myFile = ms.ToArray();
+            string myFileAsString = Convert.ToBase64String(myFile);
+            //call the sign file method 
+            //store the sign file in the db in file transfer
+            MemoryStream ms1 = new MemoryStream();
+            file.CopyTo(ms1);
+            string signature = c.DigitalSigning(myFileAsString, privateKey);
+            Stream encryptedFile = c.HybridEncryption(ms1, usersService.GetPublicKey(User.Identity.Name));
+            encryptedFile.CopyTo(ms);
+            byte[] myEncryptedFile = ms.ToArray();
+            //System.IO.File.WriteAllBytes("", myEncryptedFile use convert to bytes and store it in asafe plack)
+        }
+
+        public IActionResult Download(int id)
+        {
+            Cryptographic c = new Cryptographic();
+            string publicKey = usersService.GetPublicKey(User.Identity.Name);
+            string privateKey = usersService.GetPivateKey(User.Identity.Name);
+            var ft = filesService.GetFileTransfer(id);
+            Stream file = System.IO.File.OpenRead(ft.FilePath);
+            Stream decryptedFile = c.HybridDecryption(file, privateKey);
+            if(!c.DigitalVerification("use memory stream to uhh turn to string", "create a signature field in ft db", publicKey))
+            {
+                // file has been tampered
+            }
+            // 1 get the required keys
+            // 1.5 get the location of the file
+            return File(decryptedFile, "application/octet-stream", Guid.NewGuid().ToString()+"create extension in ft");
+        }
+    }
+}
+
+/*
+                         using (ZipFile zip = new ZipFile())
                         {
                             if (!String.IsNullOrEmpty(model.Password))
                             {
@@ -97,28 +154,4 @@ namespace Presentation.Controllers
                             zip.Save(absolutePath + ".zip");
                         }
                         model.FilePath = @"\files\" + fileName+".zip";
-                    }
-                    filesService.AddFileTransfer(model);
-                    ViewBag.Message = "FileTransfer saved successfully";
-                    
-                    // removed email
-                    /*
-                    Log log = new Log
-                    {
-                        IP = HttpContext.Connection.RemoteIpAddress.ToString(),
-                        UserEmail = model.UserEmail,
-                        Created = DateTime.Now,
-                        Info = "User uploading or something"
-
-                    };
-                    logService.AddLog(log);*/
-                    logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(), model.UserEmail, $"{model.UserEmail} uploaded {model.FilePath} set to expire {model.ExpiryDate}", "Info");
-                }
-            } catch (Exception ex)
-            {
-                ViewBag.Error = "FileTransfer was not saved - " + ex.Message;
-            }
-            return RedirectToAction("Create");
-        }
-    }
-}
+*/
