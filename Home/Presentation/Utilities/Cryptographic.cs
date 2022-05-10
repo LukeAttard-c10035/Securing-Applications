@@ -22,6 +22,7 @@ namespace Presentation.Utilities
             MemoryStream cipher = new MemoryStream();
             cs.CopyTo(cipher);
             cs.Close();
+            cipher.Position =0;
             #endregion
 
             #region Asymmetric part
@@ -47,12 +48,12 @@ namespace Presentation.Utilities
         {
             cipher.Position = 0;
             //reading the encrypted key and iv
-            byte[] encryptedKey = new byte[64];
-            cipher.Read(encryptedKey, 0, 64); //file pointer will move 128 positions
+            byte[] encryptedKey = new byte[128];
+            cipher.Read(encryptedKey, 0, 128); //file pointer will move 128 positions
 
 
-            byte[] encryptedIv = new byte[64];
-            cipher.Read(encryptedIv, 0, 64); //file pointer will move ANOTHER 128 positions i.e. 255
+            byte[] encryptedIv = new byte[128];
+            cipher.Read(encryptedIv, 0, 128); //file pointer will move ANOTHER 128 positions i.e. 255
 
             MemoryStream encryptedFileContent = new MemoryStream();
             cipher.CopyTo(encryptedFileContent); //file pointer will move to the eof reading what's left
@@ -82,16 +83,17 @@ namespace Presentation.Utilities
         //1. Digital Signing is a mitigation against repudiation (when an attacker denies a malicious activity)
         //2. You sign using the private key
 
-        public string DigitalSigning(string data, string privateKey)
+        public string DigitalSigning(byte[] data, string privateKey)
         {
-            RSA myAlg = RSACryptoServiceProvider.Create();
+            RSACryptoServiceProvider myAlg = new RSACryptoServiceProvider();
             myAlg.FromXmlString(privateKey);
+          //  string hashedString = Hash(data);
+           // byte[] digest = Convert.FromBase64String(hashedString);
 
-            string hashedString = Hash(data);
-            byte[] digest = Convert.FromBase64String(hashedString);
+            //byte[] signature =
+            //    myAlg.SignHash(digest, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
 
-            byte[] signature =
-                myAlg.SignHash(digest, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
+           byte[] signature = myAlg.SignData(data, SHA512.Create());
 
             return Convert.ToBase64String(signature);
 
@@ -103,13 +105,13 @@ namespace Presentation.Utilities
             RSA myAlg = RSACryptoServiceProvider.Create();
             myAlg.FromXmlString(publicKey);
 
-            string hashedString = Hash(data);
-            byte[] digest = Convert.FromBase64String(hashedString);
-
-            //myAlg.VerifyHash(digest, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
-            myAlg.SignHash(digest, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
+            //string hashedString = Hash(data);
+            //byte[] digest = Convert.FromBase64String(hashedString);
+            byte[] dataByte = Convert.FromBase64String(data);
+            byte[] signatureByte = Convert.FromBase64String(signature);
+            return myAlg.VerifyData(dataByte, signatureByte, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
+            //myAlg.SignHash(digest, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
             //you have to use VerifyHash instead of SignHash
-            return true;
         }
 
         public string Hash(string originalText)

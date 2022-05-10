@@ -91,7 +91,7 @@ namespace Presentation.Controllers
                         ms.Position = 0;
                         byte[] myFile = ms.ToArray();
                         string myFileAsString = Convert.ToBase64String(myFile);
-                        model.DigitalSignature = "causing errors";// c.DigitalSigning(myFileAsString, privateKey);
+                        model.DigitalSignature = c.DigitalSigning(myFile, privateKey);
                         MemoryStream ms1 = new MemoryStream();
                         file.CopyTo(ms1);
                         ms1.Position = 0;
@@ -128,10 +128,17 @@ namespace Presentation.Controllers
                 var ft = filesService.GetFileTransfer(id);
                 Stream file = System.IO.File.OpenRead(webHostEnvironment.WebRootPath + ft.FilePath);
                 Stream decryptedFile = c.HybridDecryption(file, privateKey);
-                //if(!c.DigitalVerification("use memory stream to uhh turn to string", "create a signature field in ft db", publicKey))
-                //{
-                    // file has been tampered
-                //}
+                decryptedFile.Position =0;
+                MemoryStream ms = new MemoryStream();
+                decryptedFile.CopyTo(ms);
+                ms.Position = 0;
+                byte[] data = ms.ToArray();
+                string myFileAsString = Convert.ToBase64String(data);
+                decryptedFile.Position = 0;
+                if (!c.DigitalVerification(myFileAsString, ft.DigitalSignature, publicKey))
+                {
+                    throw new Exception("File has been tampered");
+                }
                 // 1 get the required keys
                 // 1.5 get the location of the file
                 return File(decryptedFile, "application/octet-stream", Guid.NewGuid().ToString() + ".jpg"); // use the ft extension later
