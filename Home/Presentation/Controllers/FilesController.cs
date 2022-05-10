@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.ActionFilter;
 using Presentation.Utilities;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -104,6 +105,7 @@ namespace Presentation.Controllers
                         System.IO.File.WriteAllBytes(absoluteSecurePath, myEncryptedFile); //use convert to bytes and store it in asafe plack
 
                         // removed zip
+                        model.Extension = Path.GetExtension(file.FileName);
                         model.FilePath = @"\files-secure\" + fileName;
                         model.FileName = file.FileName;
                     }
@@ -117,49 +119,46 @@ namespace Presentation.Controllers
             }
             return RedirectToAction("Create");
         }
-
-        public IActionResult Download(int id)
+        [CustomAuthorization()]
+        public IActionResult Download(int fileTransferId)
         {
             try
             {
                 Cryptographic c = new Cryptographic();
-                string publicKey = usersService.GetPublicKey(User.Identity.Name);
-                string privateKey = usersService.GetPivateKey(User.Identity.Name);
-                var ft = filesService.GetFileTransfer(id);
-                Stream file = System.IO.File.OpenRead(webHostEnvironment.WebRootPath + ft.FilePath);
-                Stream decryptedFile = c.HybridDecryption(file, privateKey);
-                decryptedFile.Position =0;
-                MemoryStream ms = new MemoryStream();
-                decryptedFile.CopyTo(ms);
-                ms.Position = 0;
-                byte[] data = ms.ToArray();
-                string myFileAsString = Convert.ToBase64String(data);
-                decryptedFile.Position = 0;
-                if (!c.DigitalVerification(myFileAsString, ft.DigitalSignature, publicKey))
-                {
-                    throw new Exception("File has been tampered");
-                }
+                string publicKey = "", privateKey = "";
+                var ft = filesService.GetFileTransfer(fileTransferId);
+                    Stream file = System.IO.File.OpenRead(webHostEnvironment.WebRootPath + ft.FilePath);
+                    if (ft.UserEmail != User.Identity.Name)
+                    {
+                        publicKey = usersService.GetPublicKey(ft.UserEmail);
+                        privateKey = usersService.GetPivateKey(ft.UserEmail);
+                    }
+                    else
+                    {
+                        publicKey = usersService.GetPublicKey(User.Identity.Name);
+                        privateKey = usersService.GetPivateKey(User.Identity.Name);
+                    }
+                    Stream decryptedFile = c.HybridDecryption(file, usersService.GetPivateKey(ft.UserEmail));
+                    decryptedFile.Position = 0;
+                    MemoryStream ms = new MemoryStream();
+                    decryptedFile.CopyTo(ms);
+                    ms.Position = 0;
+                    byte[] data = ms.ToArray();
+                    string myFileAsString = Convert.ToBase64String(data);
+                    decryptedFile.Position = 0;
+                    if (!c.DigitalVerification(myFileAsString, ft.DigitalSignature, publicKey))
+                    {
+                        throw new Exception("File has been tampered");
+                    }
+                    return File(decryptedFile, "application/octet-stream", Guid.NewGuid().ToString() + ft.Extension); // use the ft extension later
                 // 1 get the required keys
                 // 1.5 get the location of the file
-                return File(decryptedFile, "application/octet-stream", Guid.NewGuid().ToString() + ".jpg"); // use the ft extension later
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Error", "Home", new {message = ex.Message});
             }
 
         }
     }
 }
-
-/*
-                         using (ZipFile zip = new ZipFile())
-                        {
-                            if (!String.IsNullOrEmpty(model.Password))
-                            {
-                                zip.Password = model.Password;  
-                            }
-                            zip.AddFile(absolutePath);
-                            zip.Save(absolutePath + ".zip");
-                        }
-                        model.FilePath = @"\files\" + fileName+".zip";
-*/

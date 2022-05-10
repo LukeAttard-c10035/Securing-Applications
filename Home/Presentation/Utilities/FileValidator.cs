@@ -10,6 +10,10 @@ namespace Presentation.Utilities
         byte[] dictionary_pdf = new byte[] { 37, 80, 68, 70, 45 }; 
         public bool MagicChecker(IFormFile file)
         {
+            if(file == null)
+            {
+                return false;
+            }
             bool isJpg = false, isPdf = false, isJpgE = false, isPdfE = false;
             using (Stream myFileForCheckingType = file.OpenReadStream())
             {

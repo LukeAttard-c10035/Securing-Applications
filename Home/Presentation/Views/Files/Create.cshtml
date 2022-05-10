@@ -24,16 +24,6 @@
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @if(ViewBag.Users != null)
-            {
-                <div class="form-group">
-                <label asp-for="AuthorizedUsers" class="control-label"></label>
-                <select asp-for="AuthorizedUsers" class="selectpicker col-10" asp-items="@(new SelectList(ViewBag.Users))" multiple title="Select the users...">
-                </select>
-
-                <span asp-validation-for="AuthorizedUsers" class="text-danger"></span>
-                </div>
-            }
             
             <div class="form-group custom-file">
                 <label asp-for="FilePath" class="control-label"></label>
@@ -41,12 +31,17 @@
                 <span asp-validation-for="FilePath" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="AuthorizedUsers" class="control-label"></label>
+                <input asp-for="AuthorizedUsers" class="form-control">
+                <span asp-validation-for="AuthorizedUsers" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="ExpiryDate" class="control-label"></label>
                 <input type="date" asp-for="ExpiryDate" class="form-control" />
                 <span asp-validation-for="ExpiryDate" class="text-danger"></span>
             </div>
             <div class="form-group mt-3">
-                <input type="submit" value="Get a Link" class="btn btn-primary" />
+                <input type="submit" value="Upload File" class="btn btn-primary" />
             </div>      
         </form>
     </div>

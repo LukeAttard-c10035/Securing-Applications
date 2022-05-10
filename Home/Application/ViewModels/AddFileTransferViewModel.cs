@@ -14,5 +14,6 @@ namespace Application.ViewModels
         public DateTime? ExpiryDate { get; set; }
         public string DigitalSignature { get; set; }
         public string FileName { get; set; }
+        public string Extension { get; set; }
     }
 }

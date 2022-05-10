@@ -11,46 +11,40 @@
 @foreach (var item in Model) {
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(modelItem => item.Id)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.UserEmail)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(modelItem => item.UserEmail)
         </dd>
+            @if(item.AuthorizedUsers != null)
+            {
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.AuthorizedUsers)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(modelItem => item.AuthorizedUsers)
+                </dd>
+            }
+
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AuthorizedUsers)
+            @Html.DisplayNameFor(model => model.FileName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(modelItem => item.AuthorizedUsers)
+            @Html.DisplayFor(modelItem => item.FileName)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FilePath)
-        </dt>
+            @if(item.ExpiryDate != null)
+            {
+                 <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.ExpiryDate)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(modelItem => item.ExpiryDate)
+                </dd>
+            }
+
+
         <dd class = "col-sm-10">
-            @Html.DisplayFor(modelItem => item.FilePath)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExpiryDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(modelItem => item.ExpiryDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.isExpired)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(modelItem => item.isExpired)
-        </dd>
-        <dd class = "col-sm-10">
-            <a href ="@Html.DisplayFor(modelItem => item.FilePath)">Download Zip</a>
-        </dd>
-        <dd class = "col-sm-10">
-            <a asp-action="Download" asp-route-id="@item.Id">View your File Transfers</a>
+            <a asp-action="Download" asp-route-fileTransferId="@item.Id">Download File</a>
         </dd>
     </dl>
 }

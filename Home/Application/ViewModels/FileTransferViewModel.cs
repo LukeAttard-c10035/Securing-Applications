@@ -13,5 +13,6 @@ namespace Application.ViewModels
         public bool isExpired { get; set; }
         public string DigitalSignature { get; set; }
         public string FileName { get; set; }
+        public string Extension { get; set; }
     }
 }

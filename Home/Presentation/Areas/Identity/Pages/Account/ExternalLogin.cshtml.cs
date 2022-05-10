@@ -123,7 +123,7 @@ namespace Presentation.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                RSA rsa = new RSACryptoServiceProvider(512);
+                RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
                 string privateKeyXML = rsa.ToXmlString(true);
                 string publicKeyXML = rsa.ToXmlString(false);
                 var user = new CustomUser { UserName = Input.Email, Email = Input.Email, privateKey = privateKeyXML, publicKey = publicKeyXML };

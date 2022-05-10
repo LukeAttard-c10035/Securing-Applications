@@ -23,5 +23,7 @@ namespace Domain.Models
         public string DigitalSignature { get; set; }
         [Required]
         public string FileName { get; set; }
+        [Required]
+        public string Extension { get; set; }
     }
 }

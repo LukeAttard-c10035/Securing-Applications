@@ -24,6 +24,7 @@ namespace Application.Services
                 isExpired = false,
                 DigitalSignature = model.DigitalSignature,
                 FileName = model.FileName,
+                Extension = model.Extension,
             }); ;
         }
 
@@ -40,6 +41,7 @@ namespace Application.Services
                 isExpired =  ft.isExpired,
                 DigitalSignature = ft.DigitalSignature,
                 FileName = ft.FileName,
+                Extension= ft.Extension,
             };
             return model;
         }
@@ -47,7 +49,7 @@ namespace Application.Services
         public IQueryable<FileTransferViewModel> GetFileTransfers(string username, string web)
         {
             var list = from ft in ftRepo.GetFileTransfers()
-                       where (ft.UserEmail == username)
+                       where (ft.UserEmail == username) || (ft.AuthorizedUsers == username)
                        orderby ft.Id descending
                        select new FileTransferViewModel()
                        {
@@ -60,6 +62,7 @@ namespace Application.Services
                            isExpired = ft.isExpired,
                            DigitalSignature = ft.DigitalSignature,
                            FileName = ft.FileName,
+                           Extension = ft.Extension,
                        };
             return list;
         }
