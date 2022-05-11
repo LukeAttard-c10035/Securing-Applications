@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilter;
+using Presentation.Models;
 using Presentation.Utilities;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -76,14 +77,19 @@ namespace Presentation.Controllers
                     if (!magic.MagicChecker(file))
                     {
                         ViewBag.Error = "The file is not in the correct format";
-                        logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(),
-                            model.UserEmail, $"{model.UserEmail} failed uploading {model.FilePath} set to expire {model.ExpiryDate}", "Error");
+                        logService.SetupLog(
+                            HttpContext.Connection.RemoteIpAddress.ToString(),
+                            User.Identity.Name,
+                            $"{User.Identity.Name} failed uploading {file.FileName}",
+                            "Info"
+                         );
                         return View();
                     }
                     if (file != null)
                     {
                         string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-                        string absolutePath = webHostEnvironment.WebRootPath + "\\files\\" + fileName;
+                        string testPath = webHostEnvironment.ContentRootPath + "\\UserFiles\\" + fileName;
+                        //string absolutePath = webHostEnvironment.WebRootPath + "\\files\\" + fileName;
                         Cryptographic c = new Cryptographic();
                         MemoryStream ms = new MemoryStream();
                         string privateKey = usersService.GetPivateKey(User.Identity.Name);
@@ -101,17 +107,20 @@ namespace Presentation.Controllers
                         encryptedFile.CopyTo(ms);
                         ms.Position = 0;
                         byte[] myEncryptedFile = ms.ToArray();
-                        string absoluteSecurePath = webHostEnvironment.WebRootPath + "\\files-secure\\" + fileName;//fileName;
+                        string absoluteSecurePath = webHostEnvironment.ContentRootPath + "\\UserFiles\\" + fileName;
                         System.IO.File.WriteAllBytes(absoluteSecurePath, myEncryptedFile); //use convert to bytes and store it in asafe plack
-
-                        // removed zip
                         model.Extension = Path.GetExtension(file.FileName);
-                        model.FilePath = @"\files-secure\" + fileName;
+                        model.FilePath = @"\UserFiles\" + fileName;
                         model.FileName = file.FileName;
                     }
                     filesService.AddFileTransfer(model);
                     ViewBag.Message = "FileTransfer saved successfully";
-                    logService.SetupLog(HttpContext.Connection.RemoteIpAddress.ToString(), model.UserEmail, $"{model.UserEmail} uploaded {model.FilePath} set to expire {model.ExpiryDate}", "Info");
+                    logService.SetupLog(
+                        HttpContext.Connection.RemoteIpAddress.ToString(),
+                        User.Identity.Name,
+                        $"{User.Identity.Name} uploaded {file.FileName} Auth User: {model.AuthorizedUsers}  Expiery: {model.ExpiryDate}",
+                        "Info"
+                     );
                 }
             } catch (Exception ex)
             {
@@ -127,7 +136,7 @@ namespace Presentation.Controllers
                 Cryptographic c = new Cryptographic();
                 string publicKey = "", privateKey = "";
                 var ft = filesService.GetFileTransfer(fileTransferId);
-                    Stream file = System.IO.File.OpenRead(webHostEnvironment.WebRootPath + ft.FilePath);
+                    Stream file = System.IO.File.OpenRead(webHostEnvironment.ContentRootPath + ft.FilePath);
                     if (ft.UserEmail != User.Identity.Name)
                     {
                         publicKey = usersService.GetPublicKey(ft.UserEmail);
@@ -146,19 +155,28 @@ namespace Presentation.Controllers
                     byte[] data = ms.ToArray();
                     string myFileAsString = Convert.ToBase64String(data);
                     decryptedFile.Position = 0;
-                    if (!c.DigitalVerification(myFileAsString, ft.DigitalSignature, publicKey))
-                    {
-                        throw new Exception("File has been tampered");
-                    }
-                    return File(decryptedFile, "application/octet-stream", Guid.NewGuid().ToString() + ft.Extension); // use the ft extension later
-                // 1 get the required keys
-                // 1.5 get the location of the file
+                if (!c.DigitalVerification(myFileAsString, ft.DigitalSignature, publicKey))
+                {
+                    logService.SetupLog(
+                        HttpContext.Connection.RemoteIpAddress.ToString(),
+                        User.Identity.Name,
+                        $"{User.Identity.Name} attempted to download a tampered file {ft.FileName} ID: {ft.Id} Uploader: {ft.UserEmail} Auth User: {ft.AuthorizedUsers}  Expiery: {ft.ExpiryDate}",
+                        "Error"
+                     );
+                    throw new Exception("File has been tampered");
+                }
+                return File(decryptedFile, "application/octet-stream", Guid.NewGuid().ToString() + ft.Extension); // use the ft extension later
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Error", "Home", new {message = ex.Message});
+                ViewBag.ErrorMessage = ex.Message;
+                return RedirectToAction("Error", "Files", new {error = ex.Message});
             }
+        }
 
+        public IActionResult Error(string error)
+        {
+            return View(new ErrorViewModel { RequestId = error });
         }
     }
 }
