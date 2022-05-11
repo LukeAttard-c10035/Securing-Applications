@@ -33,9 +33,6 @@
 
   <ItemGroup>
     <Folder Include="UserFiles\" />
-    <Folder Include="wwwroot\files\" />
-    <Folder Include="wwwroot\logs\" />
-    <Folder Include="wwwroot\files-secure\" />
   </ItemGroup>
 
 </Project>

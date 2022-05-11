@@ -47,7 +47,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Create()
         {
             var usernames = usersService.GetUsers();
@@ -58,7 +58,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken()]
-        [Authorize(Roles ="User")]
+        [Authorize(Roles ="User,Admin")]
         public IActionResult Create(AddFileTransferViewModel model, IFormFile file)
         {
             try
