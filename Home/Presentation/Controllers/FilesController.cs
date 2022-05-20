@@ -136,7 +136,8 @@ namespace Presentation.Controllers
                 Cryptographic c = new Cryptographic();
                 string publicKey = "", privateKey = "";
                 var ft = filesService.GetFileTransfer(fileTransferId);
-                    Stream file = System.IO.File.OpenRead(webHostEnvironment.ContentRootPath + ft.FilePath);
+                if (ft == null) { throw new Exception("Access Denied: You do not have the rights to access this file"); }
+                Stream file = System.IO.File.OpenRead(webHostEnvironment.ContentRootPath + ft.FilePath);
                     if (ft.UserEmail != User.Identity.Name)
                     {
                         publicKey = usersService.GetPublicKey(ft.UserEmail);

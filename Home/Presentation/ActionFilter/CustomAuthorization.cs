@@ -24,9 +24,9 @@ namespace Presentation.ActionFilter
 
                 FileTransferViewModel ft = fileService.GetFileTransfer(id);
 
-                if (string.IsNullOrEmpty(username))
+                if (string.IsNullOrEmpty(username) || ft == null)
                 {
-                    context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { action = "ErrorMessage", controller = "Home", message = "access denied" }));
+                    throw new UnauthorizedAccessException("Access Denied: You do not have the rights to access this file");
                 }
                 else
                 {

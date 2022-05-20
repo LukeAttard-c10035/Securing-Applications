@@ -1,6 +1,9 @@
 ﻿using Application.Interfaces;
 using Application.ViewModels;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,20 +33,36 @@ namespace Application.Services
 
         public FileTransferViewModel GetFileTransfer(int id)
         {
-            var ft = ftRepo.GetFileTransfer(id);
-            FileTransferViewModel model = new FileTransferViewModel()
+            try
             {
-                Id = ft.Id,
-                FilePath = ft.FilePath,
-                AuthorizedUsers = ft.AuthorizedUsers,
-                UserEmail = ft.UserEmail,
-                ExpiryDate = ft.ExpiryDate,
-                isExpired =  ft.isExpired,
-                DigitalSignature = ft.DigitalSignature,
-                FileName = ft.FileName,
-                Extension= ft.Extension,
-            };
-            return model;
+                var ft = ftRepo.GetFileTransfer(id);
+                if(ft == null)
+                {
+                    throw new UnauthorizedAccessException("Access Denied: You do not have the rights to access this file");
+                }
+                else
+                {
+                    FileTransferViewModel model = new FileTransferViewModel()
+                    {
+                        Id = ft.Id,
+                        FilePath = ft.FilePath,
+                        AuthorizedUsers = ft.AuthorizedUsers,
+                        UserEmail = ft.UserEmail,
+                        ExpiryDate = ft.ExpiryDate,
+                        isExpired = ft.isExpired,
+                        DigitalSignature = ft.DigitalSignature,
+                        FileName = ft.FileName,
+                        Extension = ft.Extension,
+                    };
+                    return model;
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                new RedirectToRouteResult(new RouteValueDictionary(new { action = "Error", controller = "Files", error = ex.Message }));
+                return null;
+            }
         }
 
         public IQueryable<FileTransferViewModel> GetFileTransfers(string username, string web)

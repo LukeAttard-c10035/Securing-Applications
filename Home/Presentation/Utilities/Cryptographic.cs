@@ -73,25 +73,14 @@ namespace Presentation.Utilities
             cs.CopyTo(originalFileData);
             cs.Close();
 
-            //...missing code which you need to implement
-            //1. asymmetric decrypt the encrypted key and iv
-            //2. symmetrically decrypt the cipher
             return originalFileData;
         }
 
-
-        //1. Digital Signing is a mitigation against repudiation (when an attacker denies a malicious activity)
-        //2. You sign using the private key
 
         public string DigitalSigning(byte[] data, string privateKey)
         {
             RSACryptoServiceProvider myAlg = new RSACryptoServiceProvider();
             myAlg.FromXmlString(privateKey);
-          //  string hashedString = Hash(data);
-           // byte[] digest = Convert.FromBase64String(hashedString);
-
-            //byte[] signature =
-            //    myAlg.SignHash(digest, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
 
            byte[] signature = myAlg.SignData(data, SHA512.Create());
 
@@ -99,34 +88,14 @@ namespace Presentation.Utilities
 
         }
 
-        //finish this
         public bool DigitalVerification(string data, string signature, string publicKey)
         {
             RSA myAlg = RSACryptoServiceProvider.Create();
             myAlg.FromXmlString(publicKey);
 
-            //string hashedString = Hash(data);
-            //byte[] digest = Convert.FromBase64String(hashedString);
             byte[] dataByte = Convert.FromBase64String(data);
             byte[] signatureByte = Convert.FromBase64String(signature);
             return myAlg.VerifyData(dataByte, signatureByte, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
-            //myAlg.SignHash(digest, new HashAlgorithmName("SHA512"), RSASignaturePadding.Pkcs1);
-            //you have to use VerifyHash instead of SignHash
-        }
-
-        public string Hash(string originalText)
-        {
-            //1. when input is human readable you have to use Encoding to convert to bytes[]
-            //2. when you have 100% certainty that data being handled is already base64 format you have to
-            //   use Convert.ToBase64String / Convert.FromBase64String
-            //note: every cryptographic algorithm outputs base64 format
-            //e.g. Md5 (weak & broken), Sha1 (weak & broken), Sha256, Sha512
-
-            SHA512 myAlg = SHA512.Create();
-            byte[] myData = Convert.FromBase64String(originalText); //Encoding.UTF32.GetBytes(originalText);
-            byte[] digest = myAlg.ComputeHash(myData);
-
-            return Convert.ToBase64String(digest);
         }
     }
 }
